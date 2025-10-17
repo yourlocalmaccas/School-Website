@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Admin Panel</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                background: #f5f5f5;
+            }
+            h1 {
+                color: #333;
+            }
+            button {
+                padding: 10px 20px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-bottom: 20px;
+            }
+            button:hover {
+                background: #764ba2;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            thead {
+                background: #667eea;
+                color: white;
+            }
+            th, td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            tr:hover {
+                background: #f9f9f9;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Admin Panel - Student Registrations</h1>
+        <button onclick="loadData()">Load Data</button>
+        
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+
+        <script>
+            function loadData() {
+                fetch('http://localhost:5000/get-all-data')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.getElementById('tableBody');
+                        tableBody.innerHTML = '';
+                        
+                        data.students.forEach(student => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${student.email}</td>
+                                <td>${student.name}</td>
+                                <td>${student.phone}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+            
+            loadData();
+        </script>
+    </body>
+</html>
