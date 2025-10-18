@@ -1,89 +1,460 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Admin Panel</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                padding: 20px;
-                background: #f5f5f5;
-            }
-            h1 {
-                color: #333;
-            }
-            button {
-                padding: 10px 20px;
-                background: #667eea;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                margin-bottom: 20px;
-            }
-            button:hover {
-                background: #764ba2;
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                background: white;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                border-radius: 5px;
-                overflow: hidden;
-            }
-            thead {
-                background: #667eea;
-                color: white;
-            }
-            th, td {
-                padding: 15px;
-                text-align: left;
-                border-bottom: 1px solid #ddd;
-            }
-            tr:hover {
-                background: #f9f9f9;
-            }
-        </style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SMC Sports - Admin Panel</title>
     </head>
 
     <body>
-        <h1>Admin Panel - Student Registrations</h1>
-        <button onclick="loadData()">Load Data</button>
-        
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-            </tbody>
-        </table>
+        <h1>Admin Panel - Sports Management</h1>
+
+        <div id="systemSection" style="border: 2px solid black; padding: 15px; margin-bottom: 20px;">
+            <h2>System Status</h2>
+            <p><strong>Current Status: </strong><span id="statusText" style="font-size: 18px; color: red;">CLOSED</span></p>
+            <p><strong>Current Schedule: </strong><span id="scheduleText" style="font-size: 16px; color: blue;"></span></p>
+            
+            <h3>Open at Specific Date & Time</h3>
+            <label>Date: <input type="date" id="openDate"></label>
+            <label>Time: <input type="time" id="openTime"></label>
+            <button onclick="scheduleOpen()">Schedule Open</button>
+            
+            <h3>Manual Control</h3>
+            <button onclick="openNow()" style="background-color: green; color: white;">Open Now</button>
+            <button onclick="closeNow()" style="background-color: red; color: white;">Close Now</button>
+            <button onclick="clearSchedule()" style="background-color: orange; color: white;">Clear Schedule</button>
+            
+            <p id="systemMessage"></p>
+        </div>
+
+        <div id="sportsSection">
+            <h2>Sports & Capacity</h2>
+            <div id="sportsList"></div>
+            
+            <h3>Add New Sport</h3>
+            <input type="text" id="newSportName" placeholder="Sport name">
+            <input type="number" id="newSportCapacity" placeholder="Capacity" min="1" value="20">
+            <button onclick="addSport()">Add Sport</button>
+        </div>
+
+        <hr>
+
+        <div id="studentsSection">
+            <h2>Registered Students</h2>
+            <div id="studentsList"></div>
+        </div>
+
+        <hr>
+
+        <div id="waitlistSection">
+            <h2>Waitlist (Yellow Highlight)</h2>
+            <div id="waitlistList"></div>
+        </div>
+
+        <hr>
+
+        <div id="deleteSection">
+            <h2>Delete All Students</h2>
+            <button onclick="startDeleteAll()">Delete All Students</button>
+            <div id="deletePrompt" style="display: none;">
+                <p>Type this code to confirm: <strong id="deleteCode"></strong></p>
+                <input type="text" id="deleteCodeInput" placeholder="Enter code here">
+                <button onclick="confirmDeleteAll()">Confirm Delete</button>
+                <button onclick="cancelDeleteAll()">Cancel</button>
+            </div>
+        </div>
 
         <script>
-            function loadData() {
+            let allStudents = [];
+            let allSports = [];
+            let deleteCodeValue = null;
+
+            function loadSystemStatus() {
+                fetch('http://localhost:5000/get-system-status')
+                    .then(response => response.json())
+                    .then(data => {
+                        const statusText = data.is_open ? 'OPEN' : 'CLOSED';
+                        const statusColor = data.is_open ? 'green' : 'red';
+                        document.getElementById('statusText').textContent = statusText;
+                        document.getElementById('statusText').style.color = statusColor;
+                        
+                        if (data.open_datetime) {
+                            document.getElementById('scheduleText').textContent = data.open_datetime;
+                        } else {
+                            document.getElementById('scheduleText').textContent = 'None';
+                        }
+                    })
+                    .catch(error => console.error('Error loading system status:', error));
+            }
+
+            function scheduleOpen() {
+                const openDateEl = document.getElementById('openDate');
+                const openTimeEl = document.getElementById('openTime');
+                
+                if (!openDateEl || !openTimeEl) {
+                    alert('Error: Date/Time inputs not found');
+                    return;
+                }
+                
+                const date = openDateEl.value;
+                const time = openTimeEl.value;
+                
+                if (!date || !time) {
+                    alert('Please select both date and time');
+                    return;
+                }
+
+                const datetime = `${date}T${time}`;
+
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_open: false, open_datetime: datetime })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('systemMessage').textContent = `Scheduled to open at ${datetime}`;
+                        openDateEl.value = '';
+                        openTimeEl.value = '';
+                        setTimeout(() => {
+                            document.getElementById('systemMessage').textContent = '';
+                        }, 3000);
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error scheduling:', error));
+            }
+
+            function openNow() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_open: true })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('systemMessage').textContent = 'Sports selection is now OPEN!';
+                        setTimeout(() => {
+                            document.getElementById('systemMessage').textContent = '';
+                        }, 2000);
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error opening:', error));
+            }
+
+            function closeNow() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_open: false })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('systemMessage').textContent = 'Sports selection is now CLOSED!';
+                        setTimeout(() => {
+                            document.getElementById('systemMessage').textContent = '';
+                        }, 2000);
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error closing:', error));
+            }
+
+            function clearSchedule() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_open: false, open_datetime: '' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('systemMessage').textContent = 'Schedule cleared!';
+                        document.getElementById('openDate').value = '';
+                        document.getElementById('openTime').value = '';
+                        setTimeout(() => {
+                            document.getElementById('systemMessage').textContent = '';
+                        }, 2000);
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error clearing schedule:', error));
+            }
+
+            function loadSports() {
+                fetch('http://localhost:5000/get-sports')
+                    .then(response => response.json())
+                    .then(data => {
+                        allSports = data.sports;
+                        displaySports();
+                    })
+                    .catch(error => console.error('Error loading sports:', error));
+            }
+
+            function displaySports() {
+                const sportsList = document.getElementById('sportsList');
+                sportsList.innerHTML = '';
+                
+                allSports.forEach(sport => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <p>
+                            <strong>${sport.name}</strong> - 
+                            <input type="number" id="capacity-${sport.id}" value="${sport.capacity}" min="1" style="width: 60px;">
+                            <button onclick="updateSportCapacity(${sport.id})">Update Capacity</button>
+                            <span>${sport.current_count}/${sport.capacity}</span>
+                            <button onclick="markSportFull(${sport.id})">Mark Full</button>
+                            <button onclick="deleteSport(${sport.id})">Delete Sport</button>
+                        </p>
+                    `;
+                    sportsList.appendChild(div);
+                });
+            }
+
+            function loadStudents() {
                 fetch('http://localhost:5000/get-all-data')
                     .then(response => response.json())
                     .then(data => {
-                        const tableBody = document.getElementById('tableBody');
-                        tableBody.innerHTML = '';
-                        
-                        data.students.forEach(student => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${student.email}</td>
-                                <td>${student.name}</td>
-                                <td>${student.phone}</td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
+                        allStudents = data.students;
+                        displayStudents();
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => console.error('Error loading students:', error));
             }
-            
-            loadData();
+
+            function displayStudents() {
+                const studentsList = document.getElementById('studentsList');
+                studentsList.innerHTML = '';
+                
+                if (allStudents.length === 0) {
+                    studentsList.innerHTML = '<p>No students registered yet.</p>';
+                    return;
+                }
+                
+                allStudents.forEach(student => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <p>
+                            <strong>${student.name}</strong> (Year ${student.year}) - 
+                            <a href="mailto:${student.email}" style="color: blue; text-decoration: underline;">${student.email}</a> - ${student.phone}
+                            <button onclick="deleteStudent(${student.id})">Delete</button>
+                        </p>
+                    `;
+                    studentsList.appendChild(div);
+                });
+            }
+
+            function loadWaitlist() {
+                fetch('http://localhost:5000/get-waitlist')
+                    .then(response => response.json())
+                    .then(data => {
+                        displayWaitlist(data.waitlist);
+                    })
+                    .catch(error => console.error('Error loading waitlist:', error));
+            }
+
+            function displayWaitlist(waitlist) {
+                const waitlistList = document.getElementById('waitlistList');
+                waitlistList.innerHTML = '';
+                
+                if (waitlist.length === 0) {
+                    waitlistList.innerHTML = '<p>No waitlisted students.</p>';
+                    return;
+                }
+                
+                waitlist.forEach(student => {
+                    const div = document.createElement('div');
+                    div.style.backgroundColor = 'yellow';
+                    div.style.padding = '10px';
+                    div.style.marginBottom = '10px';
+                    div.style.borderRadius = '5px';
+                    div.innerHTML = `
+                        <p>
+                            <strong>${student.name}</strong> (Year ${student.year}) - 
+                            <a href="mailto:${student.email}" style="color: blue; text-decoration: underline;">${student.email}</a> - ${student.phone}
+                            <button onclick="deleteStudent(${student.id})">Delete</button>
+                        </p>
+                    `;
+                    waitlistList.appendChild(div);
+                });
+            }
+
+            function addSport() {
+                const name = document.getElementById('newSportName').value.trim();
+                const capacity = document.getElementById('newSportCapacity').value;
+
+                if (!name) {
+                    alert('Enter a sport name');
+                    return;
+                }
+
+                fetch('http://localhost:5000/add-sport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: name, capacity: parseInt(capacity) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('newSportName').value = '';
+                        loadSports();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error adding sport:', error));
+            }
+
+            function updateSportCapacity(sportId) {
+                const newCapacity = document.getElementById('capacity-' + sportId).value;
+
+                fetch(`http://localhost:5000/update-sport/${sportId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ capacity: parseInt(newCapacity) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        loadSports();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error updating sport:', error));
+            }
+
+            function markSportFull(sportId) {
+                const sport = allSports.find(s => s.id === sportId);
+                if (!sport) return;
+                
+                const newCapacity = sport.current_count;
+                
+                fetch(`http://localhost:5000/update-sport/${sportId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ capacity: newCapacity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        loadSports();
+                        alert(`${sport.name} marked as full (${newCapacity} capacity)`);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error marking full:', error));
+            }
+
+            function deleteSport(sportId) {
+                if (!confirm('Delete this sport?')) return;
+
+                fetch(`http://localhost:5000/delete-sport/${sportId}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        loadSports();
+                        loadStudents();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting sport:', error));
+            }
+
+            function deleteStudent(studentId) {
+                if (!confirm('Delete this student?')) return;
+
+                fetch(`http://localhost:5000/delete-student/${studentId}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        loadStudents();
+                        loadSports();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting student:', error));
+            }
+
+            function startDeleteAll() {
+                fetch('http://localhost:5000/generate-delete-code')
+                    .then(response => response.json())
+                    .then(data => {
+                        deleteCodeValue = data.code;
+                        document.getElementById('deleteCode').textContent = data.code;
+                        document.getElementById('deletePrompt').style.display = 'block';
+                    })
+                    .catch(error => console.error('Error generating code:', error));
+            }
+
+            function confirmDeleteAll() {
+                const inputCode = document.getElementById('deleteCodeInput').value.toUpperCase();
+                
+                if (inputCode !== deleteCodeValue) {
+                    alert('Code does not match. Try again.');
+                    return;
+                }
+
+                if (!confirm('This will delete ALL students. Are you absolutely sure?')) return;
+
+                fetch('http://localhost:5000/delete-all-students', {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('All students deleted!');
+                        cancelDeleteAll();
+                        loadStudents();
+                        loadSports();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting all:', error));
+            }
+
+            function cancelDeleteAll() {
+                document.getElementById('deletePrompt').style.display = 'none';
+                document.getElementById('deleteCodeInput').value = '';
+                deleteCodeValue = null;
+            }
+
+            setInterval(() => {
+                loadStudents();
+                loadSports();
+                loadWaitlist();
+                loadSystemStatus();
+            }, 2000);
+
+            loadSports();
+            loadStudents();
+            loadWaitlist();
+            loadSystemStatus();
         </script>
     </body>
 </html>

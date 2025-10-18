@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SMC Sports - Student</title>
+    </head>
+
+    <body>
+        <h1>SMC Sports Selection</h1>
+        
+        <div id="closedSection" style="display: none;">
+            <h2 style="text-align: center; color: red;">Sports Selection Closed</h2>
+            <p id="openingMessage" style="text-align: center; font-size: 18px;"></p>
+        </div>
+        
+        <div id="contactForm">
+            <h2>Step 1: Contact Information</h2>
+            <input type="text" id="emailInput" placeholder="Email">
+            <input type="text" id="nameInput" placeholder="Full Name">
+            <input type="text" id="phoneInput" placeholder="Phone Number">
+            
+            <select id="yearInput">
+                <option value="">Select Year</option>
+                <option value="7">Year 7</option>
+                <option value="8">Year 8</option>
+                <option value="9">Year 9</option>
+                <option value="10">Year 10</option>
+            </select>
+            
+            <button onclick="submitForm()">Next</button>
+            <div id="message"></div>
+        </div>
+
+        <div id="sportsSection" style="display: none;">
+            <h2>Step 2: Select Your Sport</h2>
+            <p id="confirmMessage"></p>
+            
+            <label for="sportSelect">Choose a sport:</label>
+            <select id="sportSelect">
+                <option value="">-- Select a sport --</option>
+            </select>
+            
+            <p id="sportStatus"></p>
+            
+            <button onclick="submitSport()">Submit Sport Selection</button>
+            <button onclick="refreshSports()">Refresh Sports List</button>
+            <button onclick="backToContact()">Back</button>
+            <div id="sportsMessage"></div>
+        </div>
+
+        <div id="noSportsSection" style="display: none;">
+            <h2>Step 2: Sports Selection</h2>
+            <p id="confirmMessage2"></p>
+            <p style="font-size: 18px; color: red; margin: 20px 0;"><strong>No sports available</strong></p>
+            <p>All sports are currently full. Your information has been saved and you will be contacted later.</p>
+            <button onclick="saveWaitlist()">Save Information</button>
+            <button onclick="backToContact()">Back</button>
+        </div>
+
+        <div id="successSection" style="display: none;">
+            <h2>Thank You!</h2>
+            <p id="successMessage"></p>
+            <button onclick="submitAnother()">Submit Another Student</button>
+            <button onclick="goHome()">← Home</button>
+        </div>
+
+        <script>
+            let currentStudentId = null;
+            let sports = [];
+
+            function checkSystemStatus() {
+                fetch('http://localhost:5000/get-system-status')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.is_open) {
+                            document.getElementById('contactForm').style.display = 'none';
+                            document.getElementById('sportsSection').style.display = 'none';
+                            document.getElementById('noSportsSection').style.display = 'none';
+                            document.getElementById('successSection').style.display = 'none';
+                            document.getElementById('closedSection').style.display = 'block';
+                            
+                            const openDateTime = new Date(data.open_datetime);
+                            const now = new Date();
+                            
+                            if (openDateTime > now) {
+                                document.getElementById('openingMessage').textContent = `Sports Selection will open at ${openDateTime.toLocaleString()}`;
+                            } else {
+                                document.getElementById('openingMessage').textContent = 'Sports Selection is currently closed.';
+                            }
+                        } else {
+                            document.getElementById('closedSection').style.display = 'none';
+                            document.getElementById('contactForm').style.display = 'block';
+                        }
+                    })
+                    .catch(error => console.error('Error checking status:', error));
+            }
+
+            checkSystemStatus();
+            setInterval(checkSystemStatus, 2000);
+
+            function submitForm() {
+                const email = document.getElementById('emailInput').value;
+                const name = document.getElementById('nameInput').value;
+                const phone = document.getElementById('phoneInput').value;
+                const year = document.getElementById('yearInput').value;
+                
+                const messageDiv = document.getElementById('message');
+
+                fetch('http://localhost:5000/submit-form', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email, name: name, phone: phone, year: year })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        currentStudentId = data.student_id;
+                        loadSports();
+                        document.getElementById('contactForm').style.display = 'none';
+                    } else {
+                        messageDiv.textContent = data.message;
+                        messageDiv.style.color = 'red';
+                    }
+                })
+                .catch(error => {
+                    messageDiv.textContent = 'Error connecting to backend.';
+                    messageDiv.style.color = 'red';
+                    console.error('Error:', error);
+                });
+            }
+
+            function loadSports() {
+                fetch('http://localhost:5000/get-sports')
+                    .then(response => response.json())
+                    .then(data => {
+                        sports = data.sports;
+                        const availableSports = sports.filter(s => s.current_count < s.capacity);
+                        
+                        if (availableSports.length === 0) {
+                            document.getElementById('confirmMessage2').textContent = 'Welcome!';
+                            document.getElementById('sportsSection').style.display = 'none';
+                            document.getElementById('noSportsSection').style.display = 'block';
+                        } else {
+                            document.getElementById('confirmMessage').textContent = 'Welcome! Select a sport:';
+                            displaySports();
+                            document.getElementById('sportsSection').style.display = 'block';
+                            document.getElementById('noSportsSection').style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Error loading sports:', error));
+            }
+
+            function displaySports() {
+                const select = document.getElementById('sportSelect');
+                select.innerHTML = '<option value="">-- Select a sport --</option>';
+                
+                sports.forEach(sport => {
+                    const isFull = sport.current_count >= sport.capacity;
+                    const option = document.createElement('option');
+                    option.value = sport.id;
+                    option.textContent = isFull ? `${sport.name} (${sport.current_count}/${sport.capacity}) - FULL` : `${sport.name} (${sport.current_count}/${sport.capacity})`;
+                    option.disabled = isFull;
+                    select.appendChild(option);
+                });
+            }
+
+            document.getElementById('sportSelect').addEventListener('change', function() {
+                const sportId = this.value;
+                if (!sportId) {
+                    document.getElementById('sportStatus').textContent = '';
+                    return;
+                }
+                
+                const sport = sports.find(s => s.id == sportId);
+                const isFull = sport.current_count >= sport.capacity;
+                document.getElementById('sportStatus').textContent = isFull ? 'This sport is full.' : `Available spots: ${sport.capacity - sport.current_count}`;
+                document.getElementById('sportStatus').style.color = isFull ? 'red' : 'green';
+            });
+
+            function submitSport() {
+                const sportId = document.getElementById('sportSelect').value;
+                const sportsMessage = document.getElementById('sportsMessage');
+
+                if (!sportId) {
+                    sportsMessage.textContent = 'Please select a sport.';
+                    sportsMessage.style.color = 'red';
+                    return;
+                }
+
+                fetch('http://localhost:5000/submit-sport', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ student_id: currentStudentId, sport_id: sportId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const sport = sports.find(s => s.id == sportId);
+                        document.getElementById('successMessage').textContent = `You have been registered for ${sport.name}!`;
+                        document.getElementById('sportsSection').style.display = 'none';
+                        document.getElementById('successSection').style.display = 'block';
+                    } else {
+                        sportsMessage.textContent = data.message;
+                        sportsMessage.style.color = 'red';
+                        loadSports();
+                    }
+                })
+                .catch(error => {
+                    sportsMessage.textContent = 'Error submitting sport.';
+                    sportsMessage.style.color = 'red';
+                    console.error('Error:', error);
+                });
+            }
+
+            document.getElementById('emailInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') submitForm();
+            });
+
+            function saveWaitlist() {
+                fetch(`http://localhost:5000/add-to-waitlist/${currentStudentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('successMessage').textContent = `Thank you! Your information has been saved. We will contact you when a sport becomes available.`;
+                    document.getElementById('noSportsSection').style.display = 'none';
+                    document.getElementById('successSection').style.display = 'block';
+                })
+                .catch(error => console.error('Error adding to waitlist:', error));
+            }
+
+            function backToContact() {
+                document.getElementById('emailInput').value = '';
+                document.getElementById('nameInput').value = '';
+                document.getElementById('phoneInput').value = '';
+                document.getElementById('yearInput').value = '';
+                document.getElementById('contactForm').style.display = 'block';
+                document.getElementById('sportsSection').style.display = 'none';
+                document.getElementById('noSportsSection').style.display = 'none';
+                currentStudentId = null;
+            }
+
+            function goHome() {
+                window.location.href = 'http://localhost:8000';
+            }
+
+            function submitAnother() {
+                document.getElementById('emailInput').value = '';
+                document.getElementById('nameInput').value = '';
+                document.getElementById('phoneInput').value = '';
+                document.getElementById('yearInput').value = '';
+                document.getElementById('contactForm').style.display = 'block';
+                document.getElementById('successSection').style.display = 'none';
+                currentStudentId = null;
+            }
+        </script>
+    </body>
+</html>
