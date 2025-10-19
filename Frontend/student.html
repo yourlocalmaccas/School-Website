@@ -3,66 +3,335 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SMC Sports - Student</title>
+        <title>SMC Sports Selection</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .container {
+                background: white;
+                padding: 40px;
+                border-radius: 10px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                max-width: 600px;
+                width: 100%;
+            }
+
+            h1 {
+                color: #2c3e50;
+                margin-bottom: 30px;
+                text-align: center;
+                font-size: 28px;
+            }
+
+            h2 {
+                color: #2c3e50;
+                margin-bottom: 20px;
+                font-size: 22px;
+            }
+
+            .section {
+                display: none;
+            }
+
+            .section.active {
+                display: block;
+            }
+
+            .closed-message {
+                text-align: center;
+                color: #c0392b;
+            }
+
+            .closed-message h2 {
+                color: #c0392b;
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .closed-message p {
+                font-size: 16px;
+                color: #555;
+                margin: 10px 0;
+            }
+
+            input, select {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 15px;
+                border: 2px solid #ecf0f1;
+                border-radius: 5px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+
+            input:focus, select:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                color: #2c3e50;
+                font-weight: bold;
+                font-size: 14px;
+            }
+
+            button {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-weight: bold;
+            }
+
+            .btn-primary {
+                background: #667eea;
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: #764ba2;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+
+            .btn-secondary {
+                background: #95a5a6;
+                color: white;
+            }
+
+            .btn-secondary:hover {
+                background: #7f8c8d;
+                transform: translateY(-2px);
+            }
+
+            .btn-success {
+                background: #27ae60;
+                color: white;
+            }
+
+            .btn-success:hover {
+                background: #229954;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+            }
+
+            .button-group {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .button-group button {
+                flex: 1;
+                margin-bottom: 0;
+            }
+
+            p {
+                line-height: 1.6;
+                color: #555;
+                margin: 15px 0;
+                text-align: center;
+            }
+
+            .step-indicator {
+                text-align: center;
+                color: #7f8c8d;
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            .welcome-message {
+                background: #ecf0f1;
+                padding: 15px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                text-align: center;
+                color: #2c3e50;
+                font-weight: bold;
+            }
+
+            .sport-status {
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .status-available {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .status-full {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            .message {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 5px;
+                text-align: center;
+                display: none;
+            }
+
+            .message.show {
+                display: block;
+            }
+
+            .message.success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .message.error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            .success-box {
+                text-align: center;
+                padding: 30px;
+            }
+
+            .success-box h2 {
+                color: #27ae60;
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+
+            .success-box p {
+                font-size: 18px;
+                color: #555;
+                margin-bottom: 20px;
+            }
+
+            @media (max-width: 600px) {
+                .container {
+                    padding: 25px;
+                }
+
+                h1 {
+                    font-size: 24px;
+                }
+
+                h2 {
+                    font-size: 20px;
+                }
+
+                button {
+                    padding: 10px;
+                    font-size: 14px;
+                }
+
+                input, select {
+                    padding: 10px;
+                    font-size: 14px;
+                }
+            }
+        </style>
     </head>
 
     <body>
-        <h1>SMC Sports Selection</h1>
-        
-        <div id="closedSection" style="display: none;">
-            <h2 style="text-align: center; color: red;">Sports Selection Closed</h2>
-            <p id="openingMessage" style="text-align: center; font-size: 18px;"></p>
-        </div>
-        
-        <div id="contactForm">
-            <h2>Step 1: Contact Information</h2>
-            <input type="text" id="emailInput" placeholder="Email">
-            <input type="text" id="nameInput" placeholder="Full Name">
-            <input type="text" id="phoneInput" placeholder="Phone Number">
+        <div class="container">
+            <h1>SMC Sports Selection</h1>
             
-            <select id="yearInput">
-                <option value="">Select Year</option>
-                <option value="7">Year 7</option>
-                <option value="8">Year 8</option>
-                <option value="9">Year 9</option>
-                <option value="10">Year 10</option>
-            </select>
-            
-            <button onclick="submitForm()">Next</button>
-            <div id="message"></div>
-        </div>
+            <div id="closedSection" class="section">
+                <div class="closed-message">
+                    <h2>Sports Selection Closed</h2>
+                    <p id="openingMessage"></p>
+                </div>
+            </div>
 
-        <div id="sportsSection" style="display: none;">
-            <h2>Step 2: Select Your Sport</h2>
-            <p id="confirmMessage"></p>
-            
-            <label for="sportSelect">Choose a sport:</label>
-            <select id="sportSelect">
-                <option value="">-- Select a sport --</option>
-            </select>
-            
-            <p id="sportStatus"></p>
-            
-            <button onclick="submitSport()">Submit Sport Selection</button>
-            <button onclick="refreshSports()">Refresh Sports List</button>
-            <button onclick="backToContact()">Back</button>
-            <div id="sportsMessage"></div>
-        </div>
+            <div id="contactForm" class="section active">
+                <div class="step-indicator">Step 1 of 2: Contact Information</div>
+                
+                <label for="emailInput">Email Address</label>
+                <input type="text" id="emailInput" placeholder="your.email@stmarks.nsw.edu.au">
+                
+                <label for="nameInput">Full Name</label>
+                <input type="text" id="nameInput" placeholder="John Smith">
+                
+                <label for="phoneInput">Phone Number</label>
+                <input type="text" id="phoneInput" placeholder="0412345678">
+                
+                <label for="yearInput">Year Level</label>
+                <select id="yearInput">
+                    <option value="">Select Year</option>
+                    <option value="7">Year 7</option>
+                    <option value="8">Year 8</option>
+                    <option value="9">Year 9</option>
+                    <option value="10">Year 10</option>
+                </select>
+                
+                <button class="btn-primary" onclick="submitForm()">Next</button>
+                <div id="message" class="message"></div>
+            </div>
 
-        <div id="noSportsSection" style="display: none;">
-            <h2>Step 2: Sports Selection</h2>
-            <p id="confirmMessage2"></p>
-            <p style="font-size: 18px; color: red; margin: 20px 0;"><strong>No sports available</strong></p>
-            <p>All sports are currently full. Your information has been saved and you will be contacted later.</p>
-            <button onclick="saveWaitlist()">Save Information</button>
-            <button onclick="backToContact()">Back</button>
-        </div>
+            <div id="sportsSection" class="section">
+                <div class="step-indicator">Step 2 of 2: Select Your Sport</div>
+                <div class="welcome-message" id="confirmMessage"></div>
+                
+                <label for="sportSelect">Choose a Sport</label>
+                <select id="sportSelect">
+                    <option value="">-- Select a sport --</option>
+                </select>
+                
+                <div id="sportStatus" class="sport-status" style="display: none;"></div>
+                
+                <button class="btn-success" onclick="submitSport()">Submit Sport Selection</button>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="refreshSports()">Refresh</button>
+                    <button class="btn-secondary" onclick="backToContact()">Back</button>
+                </div>
+                
+                <div id="sportsMessage" class="message"></div>
+            </div>
 
-        <div id="successSection" style="display: none;">
-            <h2>Thank You!</h2>
-            <p id="successMessage"></p>
-            <button onclick="submitAnother()">Submit Another Student</button>
-            <button onclick="goHome()">← Home</button>
+            <div id="noSportsSection" class="section">
+                <div class="step-indicator">Step 2 of 2: Sports Selection</div>
+                <div class="welcome-message" id="confirmMessage2"></div>
+                <p style="font-size: 18px; color: #c0392b; font-weight: bold;">No Sports Available</p>
+                <p>All sports are currently full. Your information has been saved and you will be contacted later.</p>
+                
+                <button class="btn-success" onclick="saveWaitlist()">Save Information</button>
+                <button class="btn-secondary" onclick="backToContact()">Back</button>
+            </div>
+
+            <div id="successSection" class="section">
+                <div class="success-box">
+                    <h2>✓ Success!</h2>
+                    <p id="successMessage"></p>
+                    <button class="btn-primary" onclick="submitAnother()">Submit Another Student</button>
+                    <button class="btn-secondary" onclick="goHome()">Back to Home</button>
+                </div>
+            </div>
         </div>
 
         <script>
@@ -74,11 +343,11 @@
                     .then(response => response.json())
                     .then(data => {
                         if (!data.is_open) {
-                            document.getElementById('contactForm').style.display = 'none';
-                            document.getElementById('sportsSection').style.display = 'none';
-                            document.getElementById('noSportsSection').style.display = 'none';
-                            document.getElementById('successSection').style.display = 'none';
-                            document.getElementById('closedSection').style.display = 'block';
+                            document.getElementById('contactForm').classList.remove('active');
+                            document.getElementById('sportsSection').classList.remove('active');
+                            document.getElementById('noSportsSection').classList.remove('active');
+                            document.getElementById('successSection').classList.remove('active');
+                            document.getElementById('closedSection').classList.add('active');
                             
                             const openDateTime = new Date(data.open_datetime);
                             const now = new Date();
@@ -89,15 +358,12 @@
                                 document.getElementById('openingMessage').textContent = 'Sports Selection is currently closed.';
                             }
                         } else {
-                            document.getElementById('closedSection').style.display = 'none';
-                            document.getElementById('contactForm').style.display = 'block';
+                            document.getElementById('closedSection').classList.remove('active');
+                            document.getElementById('contactForm').classList.add('active');
                         }
                     })
                     .catch(error => console.error('Error checking status:', error));
             }
-
-            checkSystemStatus();
-            setInterval(checkSystemStatus, 2000);
 
             function submitForm() {
                 const email = document.getElementById('emailInput').value;
@@ -119,15 +385,15 @@
                     if (data.status === 'success') {
                         currentStudentId = data.student_id;
                         loadSports();
-                        document.getElementById('contactForm').style.display = 'none';
+                        document.getElementById('contactForm').classList.remove('active');
                     } else {
                         messageDiv.textContent = data.message;
-                        messageDiv.style.color = 'red';
+                        messageDiv.className = 'message error show';
                     }
                 })
                 .catch(error => {
                     messageDiv.textContent = 'Error connecting to backend.';
-                    messageDiv.style.color = 'red';
+                    messageDiv.className = 'message error show';
                     console.error('Error:', error);
                 });
             }
@@ -141,13 +407,13 @@
                         
                         if (availableSports.length === 0) {
                             document.getElementById('confirmMessage2').textContent = 'Welcome!';
-                            document.getElementById('sportsSection').style.display = 'none';
-                            document.getElementById('noSportsSection').style.display = 'block';
+                            document.getElementById('sportsSection').classList.remove('active');
+                            document.getElementById('noSportsSection').classList.add('active');
                         } else {
-                            document.getElementById('confirmMessage').textContent = 'Welcome! Select a sport:';
+                            document.getElementById('confirmMessage').textContent = 'Welcome! Now select your sport.';
                             displaySports();
-                            document.getElementById('sportsSection').style.display = 'block';
-                            document.getElementById('noSportsSection').style.display = 'none';
+                            document.getElementById('sportsSection').classList.add('active');
+                            document.getElementById('noSportsSection').classList.remove('active');
                         }
                     })
                     .catch(error => console.error('Error loading sports:', error));
@@ -155,6 +421,7 @@
 
             function displaySports() {
                 const select = document.getElementById('sportSelect');
+                const previousSelection = select.value;
                 select.innerHTML = '<option value="">-- Select a sport --</option>';
                 
                 sports.forEach(sport => {
@@ -165,19 +432,34 @@
                     option.disabled = isFull;
                     select.appendChild(option);
                 });
+                
+                if (previousSelection) {
+                    const option = select.querySelector(`option[value="${previousSelection}"]`);
+                    if (option && !option.disabled) {
+                        select.value = previousSelection;
+                    }
+                }
             }
 
             document.getElementById('sportSelect').addEventListener('change', function() {
                 const sportId = this.value;
                 if (!sportId) {
-                    document.getElementById('sportStatus').textContent = '';
+                    document.getElementById('sportStatus').style.display = 'none';
                     return;
                 }
                 
                 const sport = sports.find(s => s.id == sportId);
                 const isFull = sport.current_count >= sport.capacity;
-                document.getElementById('sportStatus').textContent = isFull ? 'This sport is full.' : `Available spots: ${sport.capacity - sport.current_count}`;
-                document.getElementById('sportStatus').style.color = isFull ? 'red' : 'green';
+                const statusDiv = document.getElementById('sportStatus');
+                
+                if (isFull) {
+                    statusDiv.className = 'sport-status status-full';
+                    statusDiv.textContent = 'This sport is full.';
+                } else {
+                    statusDiv.className = 'sport-status status-available';
+                    statusDiv.textContent = `Available spots: ${sport.capacity - sport.current_count}`;
+                }
+                statusDiv.style.display = 'block';
             });
 
             function submitSport() {
@@ -186,7 +468,7 @@
 
                 if (!sportId) {
                     sportsMessage.textContent = 'Please select a sport.';
-                    sportsMessage.style.color = 'red';
+                    sportsMessage.className = 'message error show';
                     return;
                 }
 
@@ -202,24 +484,30 @@
                     if (data.status === 'success') {
                         const sport = sports.find(s => s.id == sportId);
                         document.getElementById('successMessage').textContent = `You have been registered for ${sport.name}!`;
-                        document.getElementById('sportsSection').style.display = 'none';
-                        document.getElementById('successSection').style.display = 'block';
+                        document.getElementById('sportsSection').classList.remove('active');
+                        document.getElementById('successSection').classList.add('active');
                     } else {
                         sportsMessage.textContent = data.message;
-                        sportsMessage.style.color = 'red';
+                        sportsMessage.className = 'message error show';
                         loadSports();
                     }
                 })
                 .catch(error => {
                     sportsMessage.textContent = 'Error submitting sport.';
-                    sportsMessage.style.color = 'red';
+                    sportsMessage.className = 'message error show';
                     console.error('Error:', error);
                 });
             }
 
-            document.getElementById('emailInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') submitForm();
-            });
+            function refreshSports() {
+                loadSports();
+                const msg = document.getElementById('sportsMessage');
+                msg.textContent = 'Sports list refreshed!';
+                msg.className = 'message success show';
+                setTimeout(() => {
+                    msg.className = 'message';
+                }, 2000);
+            }
 
             function saveWaitlist() {
                 fetch(`http://localhost:5000/add-to-waitlist/${currentStudentId}`, {
@@ -231,8 +519,8 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('successMessage').textContent = `Thank you! Your information has been saved. We will contact you when a sport becomes available.`;
-                    document.getElementById('noSportsSection').style.display = 'none';
-                    document.getElementById('successSection').style.display = 'block';
+                    document.getElementById('noSportsSection').classList.remove('active');
+                    document.getElementById('successSection').classList.add('active');
                 })
                 .catch(error => console.error('Error adding to waitlist:', error));
             }
@@ -242,14 +530,10 @@
                 document.getElementById('nameInput').value = '';
                 document.getElementById('phoneInput').value = '';
                 document.getElementById('yearInput').value = '';
-                document.getElementById('contactForm').style.display = 'block';
-                document.getElementById('sportsSection').style.display = 'none';
-                document.getElementById('noSportsSection').style.display = 'none';
+                document.getElementById('contactForm').classList.add('active');
+                document.getElementById('sportsSection').classList.remove('active');
+                document.getElementById('noSportsSection').classList.remove('active');
                 currentStudentId = null;
-            }
-
-            function goHome() {
-                window.location.href = 'http://localhost:8000';
             }
 
             function submitAnother() {
@@ -257,10 +541,17 @@
                 document.getElementById('nameInput').value = '';
                 document.getElementById('phoneInput').value = '';
                 document.getElementById('yearInput').value = '';
-                document.getElementById('contactForm').style.display = 'block';
-                document.getElementById('successSection').style.display = 'none';
+                document.getElementById('contactForm').classList.add('active');
+                document.getElementById('successSection').classList.remove('active');
                 currentStudentId = null;
             }
+
+            function goHome() {
+                window.location.href = 'http://localhost:8000';
+            }
+
+            checkSystemStatus();
+            setInterval(checkSystemStatus, 2000);
         </script>
     </body>
 </html>

@@ -4,201 +4,444 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>SMC Sports - Admin Panel</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                height: 100vh;
+                background: #f5f5f5;
+            }
+
+            .sidebar {
+                width: 250px;
+                background: #2c3e50;
+                color: white;
+                padding: 20px 0;
+                overflow-y: auto;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+
+            .sidebar h2 {
+                padding: 15px 20px;
+                font-size: 18px;
+                border-bottom: 2px solid #34495e;
+                margin-bottom: 10px;
+            }
+
+            .sidebar-item {
+                padding: 12px 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            }
+
+            .sidebar-item:hover {
+                background: #34495e;
+                border-left-color: #3498db;
+                padding-left: 17px;
+            }
+
+            .sidebar-item.active {
+                background: #3498db;
+                border-left-color: #2980b9;
+            }
+
+            .content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 30px;
+            }
+
+            .section {
+                display: none;
+                background: white;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+            }
+
+            .section.active {
+                display: block;
+            }
+
+            h1 {
+                color: #2c3e50;
+                margin-bottom: 30px;
+                font-size: 28px;
+            }
+
+            h2 {
+                color: #2c3e50;
+                margin-top: 20px;
+                margin-bottom: 15px;
+                font-size: 22px;
+                border-bottom: 2px solid #ecf0f1;
+                padding-bottom: 10px;
+            }
+
+            h3 {
+                color: #34495e;
+                margin-top: 15px;
+                margin-bottom: 10px;
+                font-size: 16px;
+            }
+
+            input, select {
+                padding: 10px;
+                margin: 8px 8px 8px 0;
+                border: 1px solid #bdc3c7;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+
+            button {
+                padding: 10px 15px;
+                margin: 8px 8px 8px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            }
+
+            button:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
+            }
+
+            .btn-primary {
+                background: #3498db;
+                color: white;
+            }
+
+            .btn-success {
+                background: #27ae60;
+                color: white;
+            }
+
+            .btn-danger {
+                background: #e74c3c;
+                color: white;
+            }
+
+            .btn-warning {
+                background: #f39c12;
+                color: white;
+            }
+
+            .btn-delete {
+                background: #c0392b;
+                color: white;
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            p {
+                line-height: 1.6;
+                margin: 10px 0;
+                color: #555;
+            }
+
+            .year-section {
+                margin: 20px 0;
+                padding: 15px;
+                background: #ecf0f1;
+                border-radius: 4px;
+                border-left: 4px solid #3498db;
+            }
+
+            .sport-section {
+                margin: 20px 0;
+                padding: 15px;
+                background: #ecf0f1;
+                border-radius: 4px;
+            }
+
+            .student-item {
+                padding: 10px;
+                margin: 8px 0;
+                background: white;
+                border-radius: 3px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .waitlist-item {
+                padding: 10px;
+                margin: 8px 0;
+                background: #ffffcc;
+                border-radius: 3px;
+                border-left: 4px solid #f39c12;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .message {
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 4px;
+                display: none;
+            }
+
+            .message.success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+                display: block;
+            }
+
+            .message.error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+                display: block;
+            }
+
+            .status-open {
+                color: #27ae60;
+                font-weight: bold;
+            }
+
+            .status-closed {
+                color: #e74c3c;
+                font-weight: bold;
+            }
+
+            a {
+                color: #3498db;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+        </style>
     </head>
 
     <body>
-        <h1>Admin Panel - Sports Management</h1>
-
-        <div id="systemSection" style="border: 2px solid black; padding: 15px; margin-bottom: 20px;">
-            <h2>System Status</h2>
-            <p><strong>Current Status: </strong><span id="statusText" style="font-size: 18px; color: red;">CLOSED</span></p>
-            <p><strong>Current Schedule: </strong><span id="scheduleText" style="font-size: 16px; color: blue;"></span></p>
-            
-            <h3>Open at Specific Date & Time</h3>
-            <label>Date: <input type="date" id="openDate"></label>
-            <label>Time: <input type="time" id="openTime"></label>
-            <button onclick="scheduleOpen()">Schedule Open</button>
-            
-            <h3>Manual Control</h3>
-            <button onclick="openNow()" style="background-color: green; color: white;">Open Now</button>
-            <button onclick="closeNow()" style="background-color: red; color: white;">Close Now</button>
-            <button onclick="clearSchedule()" style="background-color: orange; color: white;">Clear Schedule</button>
-            
-            <p id="systemMessage"></p>
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <div class="sidebar-item active" onclick="switchSection('terms')">Terms</div>
+            <div class="sidebar-item" onclick="switchSection('system')">System Status</div>
+            <div class="sidebar-item" onclick="switchSection('sports')">Sports</div>
+            <div class="sidebar-item" onclick="switchSection('students')">Students by Year</div>
+            <div class="sidebar-item" onclick="switchSection('registrations')">Registrations</div>
+            <div class="sidebar-item" onclick="switchSection('unregistered')">Unregistered</div>
+            <div class="sidebar-item" onclick="switchSection('waitlist')">Waitlist</div>
+            <div class="sidebar-item" onclick="switchSection('export')">Export & Delete</div>
         </div>
 
-        <div id="sportsSection">
-            <h2>Sports & Capacity</h2>
-            <div id="sportsList"></div>
-            
-            <h3>Add New Sport</h3>
-            <input type="text" id="newSportName" placeholder="Sport name">
-            <input type="number" id="newSportCapacity" placeholder="Capacity" min="1" value="20">
-            <button onclick="addSport()">Add Sport</button>
-        </div>
+        <div class="content">
+            <h1>SMC Sports Admin Panel</h1>
 
-        <hr>
+            <div id="terms" class="section active">
+                <h2>Term Management</h2>
+                <label>Select Term: 
+                    <select id="termSelect" onchange="switchTerm()">
+                        <option value="">Loading...</option>
+                    </select>
+                </label>
+                
+                <h3>Create New Term</h3>
+                <input type="text" id="termName" placeholder="e.g., Term 1">
+                <input type="number" id="termYear" placeholder="Year (e.g., 2025)" min="2020" max="2100">
+                <button class="btn-success" onclick="createTerm()">Create Term</button>
+                <p id="termMessage" class="message"></p>
+            </div>
 
-        <div id="studentsSection">
-            <h2>Registered Students</h2>
-            <div id="studentsList"></div>
-        </div>
+            <div id="system" class="section">
+                <h2>System Status</h2>
+                <p><strong>Status: </strong><span id="statusText" class="status-closed">CLOSED</span></p>
+                <p><strong>Schedule: </strong><span id="scheduleText">/</span></p>
+                
+                <h3>Schedule Open Date & Time</h3>
+                <label>Date: <input type="date" id="openDate"></label>
+                <label>Time: <input type="time" id="openTime"></label>
+                <button class="btn-primary" onclick="scheduleOpen()">Schedule Open</button>
+                
+                <h3>Manual Control</h3>
+                <button class="btn-success" onclick="openNow()">Open Now</button>
+                <button class="btn-danger" onclick="closeNow()">Close Now</button>
+                <button class="btn-warning" onclick="clearSchedule()">Clear Schedule</button>
+                
+                <p id="systemMessage" class="message"></p>
+            </div>
 
-        <hr>
+            <div id="sports" class="section">
+                <h2>Sports Management</h2>
+                <div id="sportsList"></div>
+                
+                <h3>Add New Sport</h3>
+                <input type="text" id="newSportName" placeholder="Sport name">
+                <input type="number" id="newSportCapacity" placeholder="Capacity" min="1" value="20">
+                <button class="btn-success" onclick="addSport()">Add Sport</button>
+            </div>
 
-        <div id="waitlistSection">
-            <h2>Waitlist (Yellow Highlight)</h2>
-            <div id="waitlistList"></div>
-        </div>
+            <div id="students" class="section">
+                <h2>Students by Year</h2>
+                <div id="studentsByYear"></div>
+            </div>
 
-        <hr>
+            <div id="registrations" class="section">
+                <h2>Registrations by Sport</h2>
+                <div id="sportRegistrations"></div>
+            </div>
 
-        <div id="deleteSection">
-            <h2>Delete All Students</h2>
-            <button onclick="startDeleteAll()">Delete All Students</button>
-            <div id="deletePrompt" style="display: none;">
-                <p>Type this code to confirm: <strong id="deleteCode"></strong></p>
-                <input type="text" id="deleteCodeInput" placeholder="Enter code here">
-                <button onclick="confirmDeleteAll()">Confirm Delete</button>
-                <button onclick="cancelDeleteAll()">Cancel</button>
+            <div id="unregistered" class="section">
+                <h2>Students Not Registered</h2>
+                <div id="unregisteredList"></div>
+            </div>
+
+            <div id="waitlist" class="section">
+                <h2>Waitlist</h2>
+                <div id="waitlistList"></div>
+            </div>
+
+            <div id="export" class="section">
+                <h2>Export Data</h2>
+                <label>Select Term to Export: 
+                    <select id="exportTermSelect">
+                        <option value="">Loading...</option>
+                    </select>
+                </label>
+                <button class="btn-primary" onclick="exportToCSV()">Export to CSV</button>
+                
+                <h2 style="margin-top: 30px;">Delete All Students</h2>
+                <button class="btn-danger" onclick="startDeleteAll()">Delete All Students</button>
+                <div id="deletePrompt" style="display: none; margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 4px;">
+                    <p>Type this code to confirm: <strong id="deleteCode" style="font-size: 18px;"></strong></p>
+                    <input type="text" id="deleteCodeInput" placeholder="Enter code here">
+                    <button class="btn-danger" onclick="confirmDeleteAll()">Confirm Delete</button>
+                    <button class="btn-primary" onclick="cancelDeleteAll()">Cancel</button>
+                </div>
             </div>
         </div>
 
         <script>
-            let allStudents = [];
+            let allTerms = [];
+            let currentTerm = null;
             let allSports = [];
+            let allStudents = [];
             let deleteCodeValue = null;
 
-            function loadSystemStatus() {
-                fetch('http://localhost:5000/get-system-status')
+            function switchSection(sectionId) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+                event.target.classList.add('active');
+            }
+
+            function loadTerms() {
+                fetch('http://localhost:5000/get-all-terms')
                     .then(response => response.json())
                     .then(data => {
-                        const statusText = data.is_open ? 'OPEN' : 'CLOSED';
-                        const statusColor = data.is_open ? 'green' : 'red';
-                        document.getElementById('statusText').textContent = statusText;
-                        document.getElementById('statusText').style.color = statusColor;
-                        
-                        if (data.open_datetime) {
-                            document.getElementById('scheduleText').textContent = data.open_datetime;
-                        } else {
-                            document.getElementById('scheduleText').textContent = 'None';
-                        }
+                        allTerms = data.terms;
+                        displayTerms();
+                        populateExportTerms();
+                        loadCurrentTerm();
                     })
-                    .catch(error => console.error('Error loading system status:', error));
+                    .catch(error => console.error('Error loading terms:', error));
             }
 
-            function scheduleOpen() {
-                const openDateEl = document.getElementById('openDate');
-                const openTimeEl = document.getElementById('openTime');
+            function displayTerms() {
+                const select = document.getElementById('termSelect');
+                select.innerHTML = '';
+                allTerms.forEach(term => {
+                    const option = document.createElement('option');
+                    option.value = term.id;
+                    option.textContent = `${term.term_name} ${term.year}${term.is_active ? ' (Active)' : ''}`;
+                    select.appendChild(option);
+                });
+            }
+
+            function populateExportTerms() {
+                const select = document.getElementById('exportTermSelect');
+                select.innerHTML = '';
+                allTerms.forEach(term => {
+                    const option = document.createElement('option');
+                    option.value = term.id;
+                    option.textContent = `${term.term_name} ${term.year}`;
+                    select.appendChild(option);
+                });
+                if (allTerms.length > 0) {
+                    select.value = allTerms[0].id;
+                }
+            }
+
+            function loadCurrentTerm() {
+                fetch('http://localhost:5000/get-current-term')
+                    .then(response => response.json())
+                    .then(data => {
+                        currentTerm = data;
+                        document.getElementById('termSelect').value = data.term_id;
+                        loadAllData();
+                    })
+                    .catch(error => console.error('Error loading current term:', error));
+            }
+
+            function switchTerm() {
+                const termId = document.getElementById('termSelect').value;
+                if (termId) {
+                    fetch(`http://localhost:5000/set-active-term/${termId}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        loadCurrentTerm();
+                    })
+                    .catch(error => console.error('Error switching term:', error));
+                }
+            }
+
+            function createTerm() {
+                const termName = document.getElementById('termName').value.trim();
+                const year = document.getElementById('termYear').value;
                 
-                if (!openDateEl || !openTimeEl) {
-                    alert('Error: Date/Time inputs not found');
+                if (!termName || !year) {
+                    alert('Enter term name and year');
                     return;
                 }
-                
-                const date = openDateEl.value;
-                const time = openTimeEl.value;
-                
-                if (!date || !time) {
-                    alert('Please select both date and time');
-                    return;
-                }
 
-                const datetime = `${date}T${time}`;
-
-                fetch('http://localhost:5000/set-system-status', {
+                fetch('http://localhost:5000/create-term', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ is_open: false, open_datetime: datetime })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ term_name: termName, year: parseInt(year) })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        document.getElementById('systemMessage').textContent = `Scheduled to open at ${datetime}`;
-                        openDateEl.value = '';
-                        openTimeEl.value = '';
-                        setTimeout(() => {
-                            document.getElementById('systemMessage').textContent = '';
-                        }, 3000);
-                        loadSystemStatus();
+                        showMessage('termMessage', 'Term created!', 'success');
+                        document.getElementById('termName').value = '';
+                        document.getElementById('termYear').value = '';
+                        loadTerms();
                     }
                 })
-                .catch(error => console.error('Error scheduling:', error));
+                .catch(error => console.error('Error creating term:', error));
             }
 
-            function openNow() {
-                fetch('http://localhost:5000/set-system-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ is_open: true })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        document.getElementById('systemMessage').textContent = 'Sports selection is now OPEN!';
-                        setTimeout(() => {
-                            document.getElementById('systemMessage').textContent = '';
-                        }, 2000);
-                        loadSystemStatus();
-                    }
-                })
-                .catch(error => console.error('Error opening:', error));
-            }
-
-            function closeNow() {
-                fetch('http://localhost:5000/set-system-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ is_open: false })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        document.getElementById('systemMessage').textContent = 'Sports selection is now CLOSED!';
-                        setTimeout(() => {
-                            document.getElementById('systemMessage').textContent = '';
-                        }, 2000);
-                        loadSystemStatus();
-                    }
-                })
-                .catch(error => console.error('Error closing:', error));
-            }
-
-            function clearSchedule() {
-                fetch('http://localhost:5000/set-system-status', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ is_open: false, open_datetime: '' })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        document.getElementById('systemMessage').textContent = 'Schedule cleared!';
-                        document.getElementById('openDate').value = '';
-                        document.getElementById('openTime').value = '';
-                        setTimeout(() => {
-                            document.getElementById('systemMessage').textContent = '';
-                        }, 2000);
-                        loadSystemStatus();
-                    }
-                })
-                .catch(error => console.error('Error clearing schedule:', error));
+            function loadAllData() {
+                loadSports();
+                loadStudents();
+                loadSystemStatus();
             }
 
             function loadSports() {
-                fetch('http://localhost:5000/get-sports')
+                fetch(`http://localhost:5000/get-sports?term_id=${currentTerm.term_id}`)
                     .then(response => response.json())
                     .then(data => {
                         allSports = data.sports;
                         displaySports();
+                        displaySportRegistrations();
                     })
                     .catch(error => console.error('Error loading sports:', error));
             }
@@ -209,85 +452,131 @@
                 
                 allSports.forEach(sport => {
                     const div = document.createElement('div');
+                    div.className = 'sport-section';
                     div.innerHTML = `
-                        <p>
-                            <strong>${sport.name}</strong> - 
-                            <input type="number" id="capacity-${sport.id}" value="${sport.capacity}" min="1" style="width: 60px;">
-                            <button onclick="updateSportCapacity(${sport.id})">Update Capacity</button>
-                            <span>${sport.current_count}/${sport.capacity}</span>
-                            <button onclick="markSportFull(${sport.id})">Mark Full</button>
-                            <button onclick="deleteSport(${sport.id})">Delete Sport</button>
-                        </p>
+                        <strong>${sport.name}</strong> - ${sport.current_count}/${sport.capacity}<br>
+                        <input type="number" id="capacity-${sport.id}" value="${sport.capacity}" min="1" style="width: 80px;">
+                        <button class="btn-primary" onclick="updateSportCapacity(${sport.id})">Update</button>
+                        <button class="btn-warning" onclick="markSportFull(${sport.id})">Mark Full</button>
+                        <button class="btn-danger" onclick="deleteSport(${sport.id})">Delete</button>
                     `;
                     sportsList.appendChild(div);
                 });
             }
 
+            function displaySportRegistrations() {
+                const section = document.getElementById('sportRegistrations');
+                section.innerHTML = '';
+                
+                allSports.forEach(sport => {
+                    fetch(`http://localhost:5000/get-sport-registrations/${sport.id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const div = document.createElement('div');
+                            div.className = 'sport-section';
+                            div.innerHTML = `<h3>${sport.name} (${data.students.length})</h3>`;
+                            
+                            data.students.forEach(student => {
+                                const p = document.createElement('p');
+                                p.innerHTML = `${student.name} (Yr ${student.year}) - <a href="mailto:${student.email}">${student.email}</a>`;
+                                div.appendChild(p);
+                            });
+                            
+                            if (data.students.length === 0) {
+                                div.innerHTML += '<p>No registrations</p>';
+                            }
+                            
+                            section.appendChild(div);
+                        });
+                });
+            }
+
             function loadStudents() {
-                fetch('http://localhost:5000/get-all-data')
+                fetch(`http://localhost:5000/get-all-data?term_id=${currentTerm.term_id}`)
                     .then(response => response.json())
                     .then(data => {
                         allStudents = data.students;
-                        displayStudents();
+                        displayStudentsByYear();
+                        displayUnregistered();
+                        loadWaitlist();
                     })
                     .catch(error => console.error('Error loading students:', error));
             }
 
-            function displayStudents() {
-                const studentsList = document.getElementById('studentsList');
-                studentsList.innerHTML = '';
+            function displayStudentsByYear() {
+                const section = document.getElementById('studentsByYear');
+                section.innerHTML = '';
                 
-                if (allStudents.length === 0) {
-                    studentsList.innerHTML = '<p>No students registered yet.</p>';
-                    return;
-                }
-                
-                allStudents.forEach(student => {
+                const years = ['7', '8', '9', '10'];
+                years.forEach(year => {
+                    const yearStudents = allStudents.filter(s => s.year === year);
+                    yearStudents.sort((a, b) => {
+                        const lastNameA = a.name.split(' ').pop();
+                        const lastNameB = b.name.split(' ').pop();
+                        return lastNameA.localeCompare(lastNameB);
+                    });
+                    
                     const div = document.createElement('div');
-                    div.innerHTML = `
-                        <p>
-                            <strong>${student.name}</strong> (Year ${student.year}) - 
-                            <a href="mailto:${student.email}" style="color: blue; text-decoration: underline;">${student.email}</a> - ${student.phone}
-                            <button onclick="deleteStudent(${student.id})">Delete</button>
-                        </p>
-                    `;
-                    studentsList.appendChild(div);
+                    div.className = 'year-section';
+                    div.innerHTML = `<h3>Year ${year} (${yearStudents.length})</h3>`;
+                    
+                    yearStudents.forEach(student => {
+                        const p = document.createElement('p');
+                        p.className = 'student-item';
+                        p.innerHTML = `<span>${student.name} - <a href="mailto:${student.email}">${student.email}</a></span> <button class="btn-delete" onclick="deleteStudent(${student.id})">Delete</button>`;
+                        div.appendChild(p);
+                    });
+                    
+                    if (yearStudents.length === 0) {
+                        div.innerHTML += '<p>No students</p>';
+                    }
+                    
+                    section.appendChild(div);
                 });
+            }
+
+            function displayUnregistered() {
+                fetch(`http://localhost:5000/get-unregistered-students?term_id=${currentTerm.term_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const section = document.getElementById('unregisteredList');
+                        section.innerHTML = '';
+                        
+                        if (data.students.length === 0) {
+                            section.innerHTML = '<p>All students registered!</p>';
+                            return;
+                        }
+                        
+                        data.students.forEach(student => {
+                            const p = document.createElement('p');
+                            p.className = 'student-item';
+                            p.innerHTML = `<span>${student.name} (Yr ${student.year}) - <a href="mailto:${student.email}">${student.email}</a></span> <button class="btn-delete" onclick="deleteStudent(${student.id})">Delete</button>`;
+                            section.appendChild(p);
+                        });
+                    })
+                    .catch(error => console.error('Error loading unregistered:', error));
             }
 
             function loadWaitlist() {
-                fetch('http://localhost:5000/get-waitlist')
+                fetch(`http://localhost:5000/get-waitlist?term_id=${currentTerm.term_id}`)
                     .then(response => response.json())
                     .then(data => {
-                        displayWaitlist(data.waitlist);
+                        const section = document.getElementById('waitlistList');
+                        section.innerHTML = '';
+                        
+                        if (data.waitlist.length === 0) {
+                            section.innerHTML = '<p>No waitlisted students.</p>';
+                            return;
+                        }
+                        
+                        data.waitlist.forEach(student => {
+                            const p = document.createElement('p');
+                            p.className = 'waitlist-item';
+                            p.innerHTML = `<span><strong>${student.name}</strong> (Yr ${student.year}) - <a href="mailto:${student.email}">${student.email}</a></span> <button class="btn-delete" onclick="deleteStudent(${student.id})">Delete</button>`;
+                            section.appendChild(p);
+                        });
                     })
                     .catch(error => console.error('Error loading waitlist:', error));
-            }
-
-            function displayWaitlist(waitlist) {
-                const waitlistList = document.getElementById('waitlistList');
-                waitlistList.innerHTML = '';
-                
-                if (waitlist.length === 0) {
-                    waitlistList.innerHTML = '<p>No waitlisted students.</p>';
-                    return;
-                }
-                
-                waitlist.forEach(student => {
-                    const div = document.createElement('div');
-                    div.style.backgroundColor = 'yellow';
-                    div.style.padding = '10px';
-                    div.style.marginBottom = '10px';
-                    div.style.borderRadius = '5px';
-                    div.innerHTML = `
-                        <p>
-                            <strong>${student.name}</strong> (Year ${student.year}) - 
-                            <a href="mailto:${student.email}" style="color: blue; text-decoration: underline;">${student.email}</a> - ${student.phone}
-                            <button onclick="deleteStudent(${student.id})">Delete</button>
-                        </p>
-                    `;
-                    waitlistList.appendChild(div);
-                });
             }
 
             function addSport() {
@@ -301,10 +590,8 @@
 
                 fetch('http://localhost:5000/add-sport', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ name: name, capacity: parseInt(capacity) })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ name: name, capacity: parseInt(capacity), term_id: currentTerm.term_id })
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -323,9 +610,7 @@
 
                 fetch(`http://localhost:5000/update-sport/${sportId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ capacity: parseInt(newCapacity) })
                 })
                 .then(response => response.json())
@@ -347,18 +632,14 @@
                 
                 fetch(`http://localhost:5000/update-sport/${sportId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ capacity: newCapacity })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
                         loadSports();
-                        alert(`${sport.name} marked as full (${newCapacity} capacity)`);
-                    } else {
-                        alert(data.message);
+                        alert(`${sport.name} marked as full`);
                     }
                 })
                 .catch(error => console.error('Error marking full:', error));
@@ -374,9 +655,6 @@
                 .then(data => {
                     if (data.status === 'success') {
                         loadSports();
-                        loadStudents();
-                    } else {
-                        alert(data.message);
                     }
                 })
                 .catch(error => console.error('Error deleting sport:', error));
@@ -391,13 +669,101 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        loadStudents();
-                        loadSports();
-                    } else {
-                        alert(data.message);
+                        loadAllData();
                     }
                 })
                 .catch(error => console.error('Error deleting student:', error));
+            }
+
+            function loadSystemStatus() {
+                fetch('http://localhost:5000/get-system-status')
+                    .then(response => response.json())
+                    .then(data => {
+                        const statusText = data.is_open ? 'OPEN' : 'CLOSED';
+                        const statusClass = data.is_open ? 'status-open' : 'status-closed';
+                        document.getElementById('statusText').textContent = statusText;
+                        document.getElementById('statusText').className = statusClass;
+                        document.getElementById('scheduleText').textContent = data.open_datetime || 'None';
+                    })
+                    .catch(error => console.error('Error loading system status:', error));
+            }
+
+            function scheduleOpen() {
+                const date = document.getElementById('openDate').value;
+                const time = document.getElementById('openTime').value;
+                
+                if (!date || !time) {
+                    alert('Please select both date and time');
+                    return;
+                }
+
+                const datetime = `${date}T${time}`;
+
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ is_open: false, open_datetime: datetime })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage('systemMessage', `Scheduled for ${datetime}`, 'success');
+                        document.getElementById('openDate').value = '';
+                        document.getElementById('openTime').value = '';
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error scheduling:', error));
+            }
+
+            function openNow() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ is_open: true })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage('systemMessage', 'Now OPEN!', 'success');
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error opening:', error));
+            }
+
+            function closeNow() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ is_open: false })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage('systemMessage', 'Now CLOSED!', 'success');
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error closing:', error));
+            }
+
+            function clearSchedule() {
+                fetch('http://localhost:5000/set-system-status', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ is_open: false, open_datetime: '' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showMessage('systemMessage', 'Schedule cleared!', 'success');
+                        document.getElementById('openDate').value = '';
+                        document.getElementById('openTime').value = '';
+                        loadSystemStatus();
+                    }
+                })
+                .catch(error => console.error('Error clearing schedule:', error));
             }
 
             function startDeleteAll() {
@@ -415,13 +781,13 @@
                 const inputCode = document.getElementById('deleteCodeInput').value.toUpperCase();
                 
                 if (inputCode !== deleteCodeValue) {
-                    alert('Code does not match. Try again.');
+                    alert('Code does not match.');
                     return;
                 }
 
-                if (!confirm('This will delete ALL students. Are you absolutely sure?')) return;
+                if (!confirm('Delete ALL students in this term?')) return;
 
-                fetch('http://localhost:5000/delete-all-students', {
+                fetch(`http://localhost:5000/delete-all-students?term_id=${currentTerm.term_id}`, {
                     method: 'DELETE',
                 })
                 .then(response => response.json())
@@ -429,10 +795,7 @@
                     if (data.status === 'success') {
                         alert('All students deleted!');
                         cancelDeleteAll();
-                        loadStudents();
-                        loadSports();
-                    } else {
-                        alert(data.message);
+                        loadAllData();
                     }
                 })
                 .catch(error => console.error('Error deleting all:', error));
@@ -444,17 +807,61 @@
                 deleteCodeValue = null;
             }
 
-            setInterval(() => {
-                loadStudents();
-                loadSports();
-                loadWaitlist();
-                loadSystemStatus();
-            }, 2000);
+            function exportToCSV() {
+                const exportTermId = document.getElementById('exportTermSelect').value;
+                if (!exportTermId) {
+                    alert('Please select a term');
+                    return;
+                }
 
-            loadSports();
-            loadStudents();
-            loadWaitlist();
-            loadSystemStatus();
+                const selectedTerm = allTerms.find(t => t.id == exportTermId);
+
+                fetch(`http://localhost:5000/get-all-data?term_id=${exportTermId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let csvContent = 'data:text/csv;charset=utf-8,';
+                        
+                        const years = ['7', '8', '9', '10'];
+                        years.forEach(year => {
+                            csvContent += `\nYear ${year}\n`;
+                            csvContent += 'Name,Email,Phone\n';
+                            
+                            const yearStudents = data.students.filter(s => s.year === year);
+                            yearStudents.sort((a, b) => {
+                                const lastNameA = a.name.split(' ').pop();
+                                const lastNameB = b.name.split(' ').pop();
+                                return lastNameA.localeCompare(lastNameB);
+                            });
+                            
+                            yearStudents.forEach(student => {
+                                csvContent += `${student.name},${student.email},${student.phone}\n`;
+                            });
+                        });
+                        
+                        const link = document.createElement('a');
+                        link.setAttribute('href', encodeURI(csvContent));
+                        link.setAttribute('download', `sports_data_${selectedTerm.term_name}_${selectedTerm.year}.csv`);
+                        link.click();
+                    })
+                    .catch(error => console.error('Error exporting:', error));
+            }
+
+            function showMessage(elementId, text, type) {
+                const el = document.getElementById(elementId);
+                el.textContent = text;
+                el.className = `message ${type}`;
+                setTimeout(() => {
+                    el.className = 'message';
+                }, 3000);
+            }
+
+            setInterval(() => {
+                if (currentTerm) {
+                    loadSystemStatus();
+                }
+            }, 3000);
+
+            loadTerms();
         </script>
     </body>
 </html>
