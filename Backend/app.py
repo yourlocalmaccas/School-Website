@@ -4,6 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 import secrets
 from datetime import datetime
 import logging
+from flask import send_from_directory
+
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -12,7 +15,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sports_system.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Configure logging
+@app.route('/')
+def index():
+    return send_from_directory('Frontend', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('Frontend', path)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -544,4 +553,4 @@ def add_to_waitlist(student_id):
         return jsonify({'status': 'error', 'message': 'Error adding to waitlist'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
