@@ -73,8 +73,14 @@
 
             h1 {
                 color: #2c3e50;
-                margin-bottom: 30px;
+                margin-bottom: 10px;
                 font-size: 28px;
+            }
+
+            .credits {
+                font-size: 12px;
+                color: #999;
+                margin-bottom: 20px;
             }
 
             h2 {
@@ -93,12 +99,19 @@
                 font-size: 16px;
             }
 
-            input, select {
+            input, select, textarea {
                 padding: 10px;
                 margin: 8px 8px 8px 0;
                 border: 1px solid #bdc3c7;
                 border-radius: 4px;
                 font-size: 14px;
+                font-family: Arial, sans-serif;
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 60px;
+                width: 100%;
             }
 
             button {
@@ -224,6 +237,19 @@
             a:hover {
                 text-decoration: underline;
             }
+
+            .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: #2c3e50;
+                color: white;
+                padding: 12px 20px;
+                text-align: center;
+                font-size: 12px;
+                border-top: 1px solid #34495e;
+            }
         </style>
     </head>
 
@@ -235,7 +261,6 @@
             <div class="sidebar-item" onclick="switchSection('sports')">Sports</div>
             <div class="sidebar-item" onclick="switchSection('students')">Students by Year</div>
             <div class="sidebar-item" onclick="switchSection('registrations')">Registrations</div>
-            <div class="sidebar-item" onclick="switchSection('unregistered')">Unregistered</div>
             <div class="sidebar-item" onclick="switchSection('waitlist')">Waitlist</div>
             <div class="sidebar-item" onclick="switchSection('export')">Export & Delete</div>
         </div>
@@ -282,6 +307,7 @@
                 
                 <h3>Add New Sport</h3>
                 <input type="text" id="newSportName" placeholder="Sport name">
+                <textarea id="newSportDescription" placeholder="Sport description (optional)"></textarea>
                 <input type="number" id="newSportCapacity" placeholder="Capacity" min="1" value="20">
                 <button class="btn-success" onclick="addSport()">Add Sport</button>
             </div>
@@ -294,11 +320,6 @@
             <div id="registrations" class="section">
                 <h2>Registrations by Sport</h2>
                 <div id="sportRegistrations"></div>
-            </div>
-
-            <div id="unregistered" class="section">
-                <h2>Students Not Registered</h2>
-                <div id="unregisteredList"></div>
             </div>
 
             <div id="waitlist" class="section">
@@ -454,7 +475,8 @@
                     const div = document.createElement('div');
                     div.className = 'sport-section';
                     div.innerHTML = `
-                        <strong>${sport.name}</strong> - ${sport.current_count}/${sport.capacity}<br>
+                        <strong>${sport.name}</strong>${sport.description ? ` - ${sport.description}` : ''}<br>
+                        ${sport.current_count}/${sport.capacity}<br>
                         <input type="number" id="capacity-${sport.id}" value="${sport.capacity}" min="1" style="width: 80px;">
                         <button class="btn-primary" onclick="updateSportCapacity(${sport.id})">Update</button>
                         <button class="btn-warning" onclick="markSportFull(${sport.id})">Mark Full</button>
@@ -497,7 +519,6 @@
                     .then(data => {
                         allStudents = data.students;
                         displayStudentsByYear();
-                        displayUnregistered();
                         loadWaitlist();
                     })
                     .catch(error => console.error('Error loading students:', error));
@@ -535,28 +556,6 @@
                 });
             }
 
-            function displayUnregistered() {
-                fetch(`http://localhost:5000/get-unregistered-students?term_id=${currentTerm.term_id}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const section = document.getElementById('unregisteredList');
-                        section.innerHTML = '';
-                        
-                        if (data.students.length === 0) {
-                            section.innerHTML = '<p>All students registered!</p>';
-                            return;
-                        }
-                        
-                        data.students.forEach(student => {
-                            const p = document.createElement('p');
-                            p.className = 'student-item';
-                            p.innerHTML = `<span>${student.name} (Yr ${student.year}) - <a href="mailto:${student.email}">${student.email}</a></span> <button class="btn-delete" onclick="deleteStudent(${student.id})">Delete</button>`;
-                            section.appendChild(p);
-                        });
-                    })
-                    .catch(error => console.error('Error loading unregistered:', error));
-            }
-
             function loadWaitlist() {
                 fetch(`http://localhost:5000/get-waitlist?term_id=${currentTerm.term_id}`)
                     .then(response => response.json())
@@ -581,6 +580,7 @@
 
             function addSport() {
                 const name = document.getElementById('newSportName').value.trim();
+                const description = document.getElementById('newSportDescription').value.trim();
                 const capacity = document.getElementById('newSportCapacity').value;
 
                 if (!name) {
@@ -591,12 +591,13 @@
                 fetch('http://localhost:5000/add-sport', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ name: name, capacity: parseInt(capacity), term_id: currentTerm.term_id })
+                    body: JSON.stringify({ name: name, description: description, capacity: parseInt(capacity), term_id: currentTerm.term_id })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
                         document.getElementById('newSportName').value = '';
+                        document.getElementById('newSportDescription').value = '';
                         loadSports();
                     } else {
                         alert(data.message);
@@ -855,13 +856,18 @@
                 }, 3000);
             }
 
+            // Live update polling
             setInterval(() => {
                 if (currentTerm) {
-                    loadSystemStatus();
+                    loadAllData();
                 }
-            }, 3000);
+            }, 2000);
 
             loadTerms();
         </script>
+
+        <div class="footer">
+            Developed by Marcus Papasavvas
+        </div>
     </body>
 </html>

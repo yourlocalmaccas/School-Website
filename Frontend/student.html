@@ -13,94 +13,114 @@
 
             body {
                 font-family: Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
                 display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 20px;
+                height: 100vh;
+                background: #f5f5f5;
             }
 
-            .container {
-                background: white;
-                padding: 40px;
-                border-radius: 10px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                max-width: 600px;
-                width: 100%;
+            .sidebar {
+                width: 250px;
+                background: #2c3e50;
+                color: white;
+                padding: 20px 0;
+                overflow-y: auto;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             }
 
-            h1 {
-                color: #2c3e50;
-                margin-bottom: 30px;
-                text-align: center;
-                font-size: 28px;
+            .sidebar h2 {
+                padding: 15px 20px;
+                font-size: 18px;
+                border-bottom: 2px solid #34495e;
+                margin-bottom: 10px;
             }
 
-            h2 {
-                color: #2c3e50;
-                margin-bottom: 20px;
-                font-size: 22px;
+            .sidebar-item {
+                padding: 12px 20px;
+                cursor: pointer;
+                transition: all 0.3s;
+                border-left: 3px solid transparent;
+            }
+
+            .sidebar-item:hover {
+                background: #34495e;
+                border-left-color: #3498db;
+            }
+
+            .sidebar-item.active {
+                background: #3498db;
+                border-left-color: #2980b9;
+            }
+
+            .content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 30px;
+                padding-bottom: 100px;
             }
 
             .section {
                 display: none;
+                background: white;
+                padding: 25px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             }
 
             .section.active {
                 display: block;
             }
 
-            .closed-message {
-                text-align: center;
-                color: #c0392b;
+            h1 {
+                color: #2c3e50;
+                margin-bottom: 20px;
+                font-size: 28px;
             }
 
-            .closed-message h2 {
-                color: #c0392b;
-                font-size: 24px;
+            h2 {
+                color: #2c3e50;
                 margin-bottom: 15px;
-            }
-
-            .closed-message p {
-                font-size: 16px;
-                color: #555;
-                margin: 10px 0;
-            }
-
-            input, select {
-                width: 100%;
-                padding: 12px;
-                margin-bottom: 15px;
-                border: 2px solid #ecf0f1;
-                border-radius: 5px;
-                font-size: 16px;
-                transition: border-color 0.3s;
-            }
-
-            input:focus, select:focus {
-                outline: none;
-                border-color: #667eea;
+                font-size: 22px;
+                border-bottom: 2px solid #ecf0f1;
+                padding-bottom: 10px;
             }
 
             label {
                 display: block;
+                margin-top: 15px;
                 margin-bottom: 8px;
                 color: #2c3e50;
                 font-weight: bold;
+            }
+
+            input, select, textarea {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #bdc3c7;
+                border-radius: 4px;
                 font-size: 14px;
+                font-family: Arial, sans-serif;
+                box-sizing: border-box;
+            }
+
+            input:focus, select:focus, textarea:focus {
+                outline: none;
+                border-color: #667eea;
             }
 
             button {
-                width: 100%;
-                padding: 12px;
-                margin-bottom: 10px;
+                padding: 10px 15px;
+                margin: 8px 8px 8px 0;
                 border: none;
-                border-radius: 5px;
-                font-size: 16px;
+                border-radius: 4px;
                 cursor: pointer;
+                font-size: 14px;
                 transition: all 0.3s;
-                font-weight: bold;
+            }
+
+            button:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
             }
 
             .btn-primary {
@@ -108,20 +128,9 @@
                 color: white;
             }
 
-            .btn-primary:hover {
-                background: #764ba2;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            }
-
             .btn-secondary {
                 background: #95a5a6;
                 color: white;
-            }
-
-            .btn-secondary:hover {
-                background: #7f8c8d;
-                transform: translateY(-2px);
             }
 
             .btn-success {
@@ -129,72 +138,10 @@
                 color: white;
             }
 
-            .btn-success:hover {
-                background: #229954;
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-            }
-
-            .button-group {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 10px;
-            }
-
-            .button-group button {
-                flex: 1;
-                margin-bottom: 0;
-            }
-
-            p {
-                line-height: 1.6;
-                color: #555;
-                margin: 15px 0;
-                text-align: center;
-            }
-
-            .step-indicator {
-                text-align: center;
-                color: #7f8c8d;
-                font-size: 14px;
-                margin-bottom: 20px;
-            }
-
-            .welcome-message {
-                background: #ecf0f1;
-                padding: 15px;
-                border-radius: 5px;
-                margin-bottom: 20px;
-                text-align: center;
-                color: #2c3e50;
-                font-weight: bold;
-            }
-
-            .sport-status {
-                padding: 10px;
-                margin-bottom: 10px;
-                border-radius: 5px;
-                text-align: center;
-                font-weight: bold;
-            }
-
-            .status-available {
-                background: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
-            }
-
-            .status-full {
-                background: #f8d7da;
-                color: #721c24;
-                border: 1px solid #f5c6cb;
-            }
-
             .message {
-                padding: 15px;
-                margin: 15px 0;
-                border-radius: 5px;
-                text-align: center;
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 4px;
                 display: none;
             }
 
@@ -214,73 +161,102 @@
                 border: 1px solid #f5c6cb;
             }
 
-            .success-box {
+            .closed-message {
                 text-align: center;
-                padding: 30px;
+                color: #c0392b;
             }
 
-            .success-box h2 {
-                color: #27ae60;
-                font-size: 28px;
-                margin-bottom: 20px;
+            .closed-message h2 {
+                color: #c0392b;
             }
 
-            .success-box p {
-                font-size: 18px;
+            .sport-card {
+                background: #ecf0f1;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 4px;
+                border-left: 4px solid #667eea;
+            }
+
+            .sport-name {
+                font-weight: bold;
+                color: #2c3e50;
+                margin-bottom: 5px;
+            }
+
+            .sport-description {
+                font-size: 13px;
                 color: #555;
-                margin-bottom: 20px;
+                margin-bottom: 10px;
+                font-style: italic;
             }
 
-            @media (max-width: 600px) {
-                .container {
-                    padding: 25px;
+            .sport-availability {
+                font-size: 13px;
+                color: #27ae60;
+            }
+
+            .sport-full {
+                color: #c0392b;
+            }
+
+            .footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: #2c3e50;
+                color: white;
+                padding: 12px 20px;
+                text-align: center;
+                font-size: 12px;
+                border-top: 1px solid #34495e;
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    flex-direction: column;
                 }
 
-                h1 {
-                    font-size: 24px;
-                }
-
-                h2 {
-                    font-size: 20px;
-                }
-
-                button {
-                    padding: 10px;
-                    font-size: 14px;
-                }
-
-                input, select {
-                    padding: 10px;
-                    font-size: 14px;
+                .sidebar {
+                    width: 100%;
+                    height: auto;
                 }
             }
         </style>
     </head>
 
     <body>
-        <div class="container">
+        <div class="sidebar">
+            <h2>Menu</h2>
+            <div class="sidebar-item active" onclick="goToSection('contact')">Contact Info</div>
+            <div class="sidebar-item" onclick="goToSection('sport')">Select Sport</div>
+        </div>
+
+        <div class="content">
             <h1>SMC Sports Selection</h1>
-            
-            <div id="closedSection" class="section">
+
+            <div id="closed" class="section">
                 <div class="closed-message">
                     <h2>Sports Selection Closed</h2>
                     <p id="openingMessage"></p>
                 </div>
             </div>
 
-            <div id="contactForm" class="section active">
-                <div class="step-indicator">Step 1 of 2: Contact Information</div>
+            <div id="contact" class="section active">
+                <h2>Step 1: Contact Information</h2>
+                <div id="message" class="message"></div>
                 
-                <label for="emailInput">Email Address</label>
+                <label>Email Address</label>
                 <input type="text" id="emailInput" placeholder="your.email@stmarks.nsw.edu.au">
                 
-                <label for="nameInput">Full Name</label>
+                <label>Full Name</label>
                 <input type="text" id="nameInput" placeholder="John Smith">
                 
-                <label for="phoneInput">Phone Number</label>
+                <label>Phone Number</label>
                 <input type="text" id="phoneInput" placeholder="0412345678">
                 
-                <label for="yearInput">Year Level</label>
+                <label>Year Level</label>
                 <select id="yearInput">
                     <option value="">Select Year</option>
                     <option value="7">Year 7</option>
@@ -290,47 +266,32 @@
                 </select>
                 
                 <button class="btn-primary" onclick="submitForm()">Next</button>
-                <div id="message" class="message"></div>
             </div>
 
-            <div id="sportsSection" class="section">
-                <div class="step-indicator">Step 2 of 2: Select Your Sport</div>
-                <div class="welcome-message" id="confirmMessage"></div>
+            <div id="sport" class="section">
+                <h2>Step 2: Select Your Sport</h2>
+                <p id="welcomeMessage"></p>
                 
-                <label for="sportSelect">Choose a Sport</label>
-                <select id="sportSelect">
-                    <option value="">-- Select a sport --</option>
-                </select>
+                <div id="sportsList"></div>
                 
-                <div id="sportStatus" class="sport-status" style="display: none;"></div>
-                
-                <button class="btn-success" onclick="submitSport()">Submit Sport Selection</button>
-                
-                <div class="button-group">
-                    <button class="btn-secondary" onclick="refreshSports()">Refresh</button>
-                    <button class="btn-secondary" onclick="backToContact()">Back</button>
-                </div>
-                
+                <button class="btn-secondary" onclick="refreshSports()">Refresh</button>
+                <button class="btn-secondary" onclick="goToSection('contact')">Back</button>
                 <div id="sportsMessage" class="message"></div>
             </div>
 
-            <div id="noSportsSection" class="section">
-                <div class="step-indicator">Step 2 of 2: Sports Selection</div>
-                <div class="welcome-message" id="confirmMessage2"></div>
-                <p style="font-size: 18px; color: #c0392b; font-weight: bold;">No Sports Available</p>
-                <p>All sports are currently full. Your information has been saved and you will be contacted later.</p>
+            <div id="nosports" class="section">
+                <h2>No Sports Available</h2>
+                <p id="welcomeMessage2"></p>
+                <p>All sports are currently full. Your information has been saved and you will be contacted when spaces become available.</p>
                 
                 <button class="btn-success" onclick="saveWaitlist()">Save Information</button>
-                <button class="btn-secondary" onclick="backToContact()">Back</button>
+                <button class="btn-secondary" onclick="goToSection('contact')">Back</button>
             </div>
 
-            <div id="successSection" class="section">
-                <div class="success-box">
-                    <h2>✓ Success!</h2>
-                    <p id="successMessage"></p>
-                    <button class="btn-primary" onclick="submitAnother()">Submit Another Student</button>
-                    <button class="btn-secondary" onclick="goHome()">Back to Home</button>
-                </div>
+            <div id="success" class="section">
+                <h2>Success!</h2>
+                <p id="successMessage"></p>
+                <button class="btn-primary" onclick="submitAnother()">Register Another Student</button>
             </div>
         </div>
 
@@ -338,202 +299,181 @@
             let currentStudentId = null;
             let sports = [];
 
+            function goToSection(sectionId) {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+                
+                const items = document.querySelectorAll('.sidebar-item');
+                if (sectionId === 'contact') items[0].classList.add('active');
+                if (sectionId === 'sport') items[1].classList.add('active');
+                
+                // Stop live updates if on success page
+                if (sectionId === 'success') {
+                    currentStudentId = null;
+                }
+            }
+
             function checkSystemStatus() {
                 fetch('http://localhost:5000/get-system-status')
                     .then(response => response.json())
                     .then(data => {
                         if (!data.is_open) {
-                            document.getElementById('contactForm').classList.remove('active');
-                            document.getElementById('sportsSection').classList.remove('active');
-                            document.getElementById('noSportsSection').classList.remove('active');
-                            document.getElementById('successSection').classList.remove('active');
-                            document.getElementById('closedSection').classList.add('active');
-                            
+                            goToSection('closed');
                             const openDateTime = new Date(data.open_datetime);
                             const now = new Date();
-                            
                             if (openDateTime > now) {
-                                document.getElementById('openingMessage').textContent = `Sports Selection will open at ${openDateTime.toLocaleString()}`;
+                                document.getElementById('openingMessage').textContent = `Will open at ${openDateTime.toLocaleString()}`;
                             } else {
-                                document.getElementById('openingMessage').textContent = 'Sports Selection is currently closed.';
+                                document.getElementById('openingMessage').textContent = 'Currently closed.';
                             }
-                        } else {
-                            document.getElementById('closedSection').classList.remove('active');
-                            document.getElementById('contactForm').classList.add('active');
                         }
                     })
                     .catch(error => console.error('Error checking status:', error));
             }
 
             function submitForm() {
-                const email = document.getElementById('emailInput').value;
-                const name = document.getElementById('nameInput').value;
-                const phone = document.getElementById('phoneInput').value;
+                const email = document.getElementById('emailInput').value.trim();
+                const name = document.getElementById('nameInput').value.trim();
+                const phone = document.getElementById('phoneInput').value.trim();
                 const year = document.getElementById('yearInput').value;
-                
                 const messageDiv = document.getElementById('message');
+
+                if (!email || !name || !phone || !year) {
+                    showMessage(messageDiv, 'Please fill in all fields', 'error');
+                    return;
+                }
 
                 fetch('http://localhost:5000/submit-form', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: email, name: name, phone: phone, year: year })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email, name, phone, year })
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.status === 'success') {
                         currentStudentId = data.student_id;
                         loadSports();
-                        document.getElementById('contactForm').classList.remove('active');
                     } else {
-                        messageDiv.textContent = data.message;
-                        messageDiv.className = 'message error show';
+                        showMessage(messageDiv, data.message || 'Error submitting form', 'error');
                     }
                 })
-                .catch(error => {
-                    messageDiv.textContent = 'Error connecting to backend.';
-                    messageDiv.className = 'message error show';
-                    console.error('Error:', error);
+                .catch(e => {
+                    console.error('Error:', e);
+                    showMessage(messageDiv, 'Error connecting to server', 'error');
                 });
             }
 
             function loadSports() {
                 fetch('http://localhost:5000/get-sports')
-                    .then(response => response.json())
+                    .then(r => r.json())
                     .then(data => {
-                        sports = data.sports;
-                        const availableSports = sports.filter(s => s.current_count < s.capacity);
+                        if (data.status === 'error') {
+                            console.error('Error loading sports:', data.message);
+                            return;
+                        }
+                        sports = data.sports || [];
+                        const available = sports.filter(s => s.current_count < s.capacity);
                         
-                        if (availableSports.length === 0) {
-                            document.getElementById('confirmMessage2').textContent = 'Welcome!';
-                            document.getElementById('sportsSection').classList.remove('active');
-                            document.getElementById('noSportsSection').classList.add('active');
+                        if (available.length === 0) {
+                            goToSection('nosports');
+                            document.getElementById('welcomeMessage2').textContent = 'Welcome!';
                         } else {
-                            document.getElementById('confirmMessage').textContent = 'Welcome! Now select your sport.';
+                            document.getElementById('welcomeMessage').textContent = 'Welcome! Select your sport:';
                             displaySports();
-                            document.getElementById('sportsSection').classList.add('active');
-                            document.getElementById('noSportsSection').classList.remove('active');
+                            goToSection('sport');
                         }
                     })
-                    .catch(error => console.error('Error loading sports:', error));
+                    .catch(e => {
+                        console.error('Error:', e);
+                        const msg = document.getElementById('sportsMessage');
+                        showMessage(msg, 'Error loading sports', 'error');
+                    });
             }
 
             function displaySports() {
-                const select = document.getElementById('sportSelect');
-                const previousSelection = select.value;
-                select.innerHTML = '<option value="">-- Select a sport --</option>';
+                const list = document.getElementById('sportsList');
+                list.innerHTML = '';
                 
                 sports.forEach(sport => {
                     const isFull = sport.current_count >= sport.capacity;
-                    const option = document.createElement('option');
-                    option.value = sport.id;
-                    option.textContent = isFull ? `${sport.name} (${sport.current_count}/${sport.capacity}) - FULL` : `${sport.name} (${sport.current_count}/${sport.capacity})`;
-                    option.disabled = isFull;
-                    select.appendChild(option);
-                });
-                
-                if (previousSelection) {
-                    const option = select.querySelector(`option[value="${previousSelection}"]`);
-                    if (option && !option.disabled) {
-                        select.value = previousSelection;
+                    const card = document.createElement('div');
+                    card.className = 'sport-card';
+                    
+                    let html = `<div class="sport-name">${sport.name}</div>`;
+                    if (sport.description) {
+                        html += `<div class="sport-description">${sport.description}</div>`;
                     }
-                }
+                    
+                    if (isFull) {
+                        html += `<div class="sport-availability sport-full">FULL (${sport.current_count}/${sport.capacity})</div>`;
+                    } else {
+                        html += `<div class="sport-availability">Available: ${sport.capacity - sport.current_count} spots (${sport.current_count}/${sport.capacity})</div>`;
+                        html += `<button class="btn-success" style="margin-top: 10px;" onclick="submitSport(${sport.id})">Select</button>`;
+                    }
+                    
+                    card.innerHTML = html;
+                    list.appendChild(card);
+                });
             }
 
-            document.getElementById('sportSelect').addEventListener('change', function() {
-                const sportId = this.value;
-                if (!sportId) {
-                    document.getElementById('sportStatus').style.display = 'none';
-                    return;
-                }
-                
-                const sport = sports.find(s => s.id == sportId);
-                const isFull = sport.current_count >= sport.capacity;
-                const statusDiv = document.getElementById('sportStatus');
-                
-                if (isFull) {
-                    statusDiv.className = 'sport-status status-full';
-                    statusDiv.textContent = 'This sport is full.';
-                } else {
-                    statusDiv.className = 'sport-status status-available';
-                    statusDiv.textContent = `Available spots: ${sport.capacity - sport.current_count}`;
-                }
-                statusDiv.style.display = 'block';
-            });
-
-            function submitSport() {
-                const sportId = document.getElementById('sportSelect').value;
-                const sportsMessage = document.getElementById('sportsMessage');
-
-                if (!sportId) {
-                    sportsMessage.textContent = 'Please select a sport.';
-                    sportsMessage.className = 'message error show';
+            function submitSport(sportId) {
+                if (!currentStudentId) {
+                    showMessage(document.getElementById('sportsMessage'), 'Student ID not found', 'error');
                     return;
                 }
 
                 fetch('http://localhost:5000/submit-sport', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ student_id: currentStudentId, sport_id: sportId })
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
                     if (data.status === 'success') {
                         const sport = sports.find(s => s.id == sportId);
                         document.getElementById('successMessage').textContent = `You have been registered for ${sport.name}!`;
-                        document.getElementById('sportsSection').classList.remove('active');
-                        document.getElementById('successSection').classList.add('active');
+                        goToSection('success');
                     } else {
-                        sportsMessage.textContent = data.message;
-                        sportsMessage.className = 'message error show';
+                        const msg = document.getElementById('sportsMessage');
+                        showMessage(msg, data.message || 'Error registering', 'error');
                         loadSports();
                     }
                 })
-                .catch(error => {
-                    sportsMessage.textContent = 'Error submitting sport.';
-                    sportsMessage.className = 'message error show';
-                    console.error('Error:', error);
+                .catch(e => {
+                    console.error('Error:', e);
+                    const msg = document.getElementById('sportsMessage');
+                    showMessage(msg, 'Error connecting to server', 'error');
                 });
             }
 
             function refreshSports() {
                 loadSports();
                 const msg = document.getElementById('sportsMessage');
-                msg.textContent = 'Sports list refreshed!';
-                msg.className = 'message success show';
-                setTimeout(() => {
-                    msg.className = 'message';
-                }, 2000);
+                showMessage(msg, 'Refreshed!', 'success');
+                setTimeout(() => msg.className = 'message', 2000);
             }
 
             function saveWaitlist() {
+                if (!currentStudentId) {
+                    console.error('Student ID not found');
+                    return;
+                }
+
                 fetch(`http://localhost:5000/add-to-waitlist/${currentStudentId}`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
+                    headers: {'Content-Type': 'application/json'},
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    document.getElementById('successMessage').textContent = `Thank you! Your information has been saved. We will contact you when a sport becomes available.`;
-                    document.getElementById('noSportsSection').classList.remove('active');
-                    document.getElementById('successSection').classList.add('active');
+                    document.getElementById('successMessage').textContent = 'Your information has been saved. We will contact you when spaces become available.';
+                    goToSection('success');
                 })
-                .catch(error => console.error('Error adding to waitlist:', error));
-            }
-
-            function backToContact() {
-                document.getElementById('emailInput').value = '';
-                document.getElementById('nameInput').value = '';
-                document.getElementById('phoneInput').value = '';
-                document.getElementById('yearInput').value = '';
-                document.getElementById('contactForm').classList.add('active');
-                document.getElementById('sportsSection').classList.remove('active');
-                document.getElementById('noSportsSection').classList.remove('active');
-                currentStudentId = null;
+                .catch(e => {
+                    console.error('Error:', e);
+                    const msg = document.getElementById('message');
+                    showMessage(msg, 'Error saving information', 'error');
+                });
             }
 
             function submitAnother() {
@@ -541,17 +481,32 @@
                 document.getElementById('nameInput').value = '';
                 document.getElementById('phoneInput').value = '';
                 document.getElementById('yearInput').value = '';
-                document.getElementById('contactForm').classList.add('active');
-                document.getElementById('successSection').classList.remove('active');
                 currentStudentId = null;
+                goToSection('contact');
             }
 
-            function goHome() {
-                window.location.href = 'http://localhost:8000';
+            function showMessage(element, text, type) {
+                element.textContent = text;
+                element.className = `message show ${type}`;
+                setTimeout(() => {
+                    element.className = 'message';
+                }, 4000);
+            }
+
+            // Live update polling - only if student has registered but not finished
+            function liveUpdate() {
+                if (currentStudentId) {
+                    loadSports();
+                }
             }
 
             checkSystemStatus();
             setInterval(checkSystemStatus, 2000);
+            setInterval(liveUpdate, 2000);
         </script>
+
+        <div class="footer">
+            Developed by Marcus Papasavvas
+        </div>
     </body>
 </html>
